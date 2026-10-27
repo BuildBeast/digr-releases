@@ -28,7 +28,7 @@ jobs:
       - name: Download real public Overture places and match Rome attractions
         run: |
           python scripts/download-overture-rome.py docs/overture-public-rome-fixture.csv "${RUNNER_TEMP}/overture-rome.geojsonseq"
-          python scripts/overture-discovery-pilot.py \\
+          python scripts/overture-discovery-pilot.py \
             --sortie docs/overture-public-rome-fixture.csv \
             --source-data "${RUNNER_TEMP}/overture-rome.geojsonseq" \
             --skip-download \
