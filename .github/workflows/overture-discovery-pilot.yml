@@ -1,4 +1,4 @@
-name: Free Overture Rome website test
+name: Free Overture 1000 public place coverage test
 
 on:
   push:
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 16
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -25,11 +25,13 @@ jobs:
         run: python -m unittest discover -s scripts -p 'test_overture_discovery_pilot.py' -v
       - name: Install DuckDB
         run: python -m pip install --disable-pip-version-check --no-input duckdb==1.4.1
-      - name: Download real public Overture places and match Rome attractions
+      - name: Generate independent public 1000-place fixture
+        run: python scripts/generate-public-1000.py
+      - name: Download actual Overture data and match 1000 public places
         run: |
-          python scripts/download-overture-rome.py docs/overture-public-rome-fixture.csv "${RUNNER_TEMP}/overture-rome.geojsonseq"
+          python scripts/download-overture-rome.py public-wikipedia-1000.csv "${RUNNER_TEMP}/overture-rome.geojsonseq"
           python scripts/overture-discovery-pilot.py \
-            --sortie docs/overture-public-rome-fixture.csv \
+            --sortie public-wikipedia-1000.csv \
             --source-data "${RUNNER_TEMP}/overture-rome.geojsonseq" \
             --skip-download \
             --outdir "${RUNNER_TEMP}/rome-report"
