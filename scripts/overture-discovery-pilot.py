@@ -58,7 +58,7 @@ def features(path):
                 if line.strip():yield json.loads(line.lstrip('\x1e'))
 def load(path):
     with open(path,newline='',encoding='utf8') as f:rows=list(csv.DictReader(f))
-    if not 1<=len(rows)<=1000 or len(set(p['place_id'] for p in rows))!=len(rows):raise ValueError('Invalid or duplicate input')
+    if not 1<=len(rows)<=2000 or len(set(p['place_id'] for p in rows))!=len(rows):raise ValueError('Invalid or duplicate input')
     for p in rows:
         p['latitude']=float(p['latitude']);p['longitude']=float(p['longitude'])
         if not (-90<=p['latitude']<=90 and -180<=p['longitude']<=180):raise ValueError('Invalid point')
@@ -91,7 +91,7 @@ def match(rows,path):
                     sim,name=max((score(place['name'],item),item) for item in n)
                     if sim>=.65:candidates.append((sim,dist,name,u,oid))
         candidates.sort(key=lambda c:(-c[0],c[1]))
-        r={'place_id':place['place_id'],'sortie_name':place['name'],'category':place.get('category',''),
+        r={'place_id':place['place_id'],'sortie_name':place['name'],'category':place.get('category',''),'city':place.get('city_slug',''),
            'status':'UNRESOLVED','website':'','overture_name':'','overture_id':'','distance_m':'','name_similarity':'',
            'candidate_count':len(candidates),'approved_for_import':False}
         if candidates:
