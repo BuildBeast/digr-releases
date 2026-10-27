@@ -109,7 +109,7 @@ def main():
     args=p.parse_args();rows=load(args.sortie);bounds=bbox(rows);data=Path(args.source_data)
     if args.dry_run:print('Overture bbox:',bounds);return
     if not args.skip_download:
-        subprocess.run(['overturemaps','download','--bbox='+bounds,'-f','geojsonseq','--type=place','-o',str(data)],check=True,timeout=350)
+        subprocess.run(['overturemaps','download','--bbox='+bounds,'-f','geojsonseq','--type=place','--no-stac','-o',str(data)],check=True,timeout=350)
     if not data.is_file() or not data.stat().st_size:raise RuntimeError('No Overture records; cannot calculate recovery')
     results,meta=match(rows,data);out=Path(args.outdir);out.mkdir(parents=True,exist_ok=True)
     with (out/'candidates.csv').open('w',newline='',encoding='utf8') as f:
