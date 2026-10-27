@@ -24,7 +24,7 @@ jobs:
       - name: Validate matcher
         run: python -m unittest discover -s scripts -p 'test_overture_discovery_pilot.py' -v
       - name: Install free Overture client
-        run: python -m pip install --disable-pip-version-check --no-input overturemaps==1.0.1
+        run: python -m pip install --disable-pip-version-check --no-input overturemaps==1.0.2
       - name: Download real public Overture places and match Rome attractions
         run: |
           python scripts/overture-discovery-pilot.py \
