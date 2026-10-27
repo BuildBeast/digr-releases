@@ -23,7 +23,7 @@ FROM read_parquet(
 WHERE bbox.xmin <= ? AND bbox.xmax >= ?
   AND bbox.ymin <= ? AND bbox.ymax >= ?
   AND websites IS NOT NULL
-LIMIT 80000
+LIMIT 350000
 """
 with out.open('w',encoding='utf8') as f:
   for city,rows in bycity.items():
@@ -34,6 +34,7 @@ with out.open('w',encoding='utf8') as f:
     print(f'Querying {city} bounding box {west:.3f},{south:.3f},{east:.3f},{north:.3f}',flush=True)
     result=c.execute(sql,[east,west,north,south]).fetchall()
     print(f'Overture {city} website candidates: {len(result)}',flush=True)
+    if len(result)==350000:raise RuntimeError(f'Overture match query reached truncation cap for {city}')
     for id,names,websites,lon,lat in result:
         data={'type':'Feature','properties':{'id':id,'names':names,'websites':websites},
               'geometry':{'type':'Point','coordinates':[float(lon),float(lat)]}}
