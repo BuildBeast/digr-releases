@@ -106,7 +106,7 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument('--sortie',required=True);p.add_argument('--source-data',required=True);p.add_argument('--outdir',default='overture-results')
     p.add_argument('--skip-download',action='store_true');p.add_argument('--dry-run',action='store_true')
-    args=p.parse_args();rows=load(args.sortie);bounds=bbox(rows);data=Path(args.source_data)
+    args=p.parse_args();rows=load(args.sortie);bounds=bbox(rows) if not args.skip_download else None;data=Path(args.source_data)
     if args.dry_run:print('Overture bbox:',bounds);return
     if not args.skip_download:
         subprocess.run(['overturemaps','download','--bbox='+bounds,'-f','geojsonseq','--type=place','--no-stac','--release=2026-10-21.0','-o',str(data)],check=True,timeout=350)
