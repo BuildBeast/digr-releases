@@ -1,0 +1,9 @@
+place_id,name,latitude,longitude,city_slug,country_code,category
+public-rome-001,Colosseum,41.89021,12.49223,rome,IT,attraction
+public-rome-002,Pantheon,41.89861,12.47687,rome,IT,attraction
+public-rome-003,Trevi Fountain,41.90093,12.48331,rome,IT,attraction
+public-rome-004,Piazza Navona,41.89916,12.47307,rome,IT,attraction
+public-rome-005,Roman Forum,41.89209,12.48644,rome,IT,attraction
+public-rome-006,Piazza del Popolo,41.91070,12.47636,rome,IT,attraction
+public-rome-007,Piazza Barberini,41.903717,12.488492,rome,IT,attraction
+public-rome-008,Palazzo Barberini,41.902643,12.489498,rome,IT,museum
