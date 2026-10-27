@@ -58,7 +58,7 @@ def features(path):
                 if line.strip():yield json.loads(line.lstrip('\x1e'))
 def load(path):
     with open(path,newline='',encoding='utf8') as f:rows=list(csv.DictReader(f))
-    if not 1<=len(rows)<=100 or len(set(p['place_id'] for p in rows))!=len(rows):raise ValueError('Invalid or duplicate input')
+    if not 1<=len(rows)<=1000 or len(set(p['place_id'] for p in rows))!=len(rows):raise ValueError('Invalid or duplicate input')
     for p in rows:
         p['latitude']=float(p['latitude']);p['longitude']=float(p['longitude'])
         if not (-90<=p['latitude']<=90 and -180<=p['longitude']<=180):raise ValueError('Invalid point')
