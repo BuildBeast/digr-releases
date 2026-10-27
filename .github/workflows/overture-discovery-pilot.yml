@@ -1,42 +1,51 @@
-name: Free Overture 1000 public place coverage test
-
+name: Free Overture 10000 public place coverage test
 on:
   push:
-    branches:
-      - codex/free-overture-rome-pilot
-
+    branches: [codex/free-overture-rome-pilot]
 permissions:
   contents: read
-
 concurrency:
-  group: overture-public-rome-test
+  group: overture-public-benchmark-10000
   cancel-in-progress: true
-
 jobs:
-  test:
+  benchmark:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: europe-west
+            cities: "rome paris london berlin"
+          - shard: europe-other
+            cities: "madrid barcelona lisbon amsterdam"
+          - shard: europe-east
+            cities: "vienna prague istanbul athens"
+          - shard: asia-pacific
+            cities: "tokyo seoul singapore sydney"
+          - shard: americas
+            cities: "new-york chicago toronto mexico-city"
     runs-on: ubuntu-latest
-    timeout-minutes: 16
+    timeout-minutes: 19
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Validate matcher
+      - name: Unit tests
         run: python -m unittest discover -s scripts -p 'test_overture_discovery_pilot.py' -v
       - name: Install DuckDB
         run: python -m pip install --disable-pip-version-check --no-input duckdb==1.4.1
-      - name: Generate independent public 1000-place fixture
-        run: python scripts/generate-public-1000.py
-      - name: Download actual Overture data and match 1000 public places
+      - name: Generate 2000 public place geotags for four cities
+        run: python scripts/generate-public-10000.py --cities ${{ matrix.cities }} --out public-2000.csv
+      - name: Download real Overture release and match
         run: |
-          python scripts/download-overture-rome.py public-wikipedia-1000.csv "${RUNNER_TEMP}/overture-rome.geojsonseq"
+          python scripts/download-overture-rome.py public-2000.csv "${RUNNER_TEMP}/overture.geojsonseq"
           python scripts/overture-discovery-pilot.py \
-            --sortie public-wikipedia-1000.csv \
-            --source-data "${RUNNER_TEMP}/overture-rome.geojsonseq" \
+            --sortie public-2000.csv \
+            --source-data "${RUNNER_TEMP}/overture.geojsonseq" \
             --skip-download \
-            --outdir "${RUNNER_TEMP}/rome-report"
-      - name: Print complete results
+            --outdir "${RUNNER_TEMP}/results"
+      - name: Print summary and all rows
         if: success()
         run: |
-          cat "${RUNNER_TEMP}/rome-report/summary.json"
-          cat "${RUNNER_TEMP}/rome-report/candidates.csv"
+          cat "${RUNNER_TEMP}/results/summary.json"
+          cat "${RUNNER_TEMP}/results/candidates.csv"
