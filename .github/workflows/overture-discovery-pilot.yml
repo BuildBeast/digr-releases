@@ -1,0 +1,38 @@
+name: Free Overture Rome website test
+
+on:
+  push:
+    branches:
+      - codex/free-overture-rome-pilot
+
+permissions:
+  contents: read
+
+concurrency:
+  group: overture-public-rome-test
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate matcher
+        run: python -m unittest discover -s scripts -p 'test_overture_discovery_pilot.py' -v
+      - name: Install free Overture client
+        run: python -m pip install --disable-pip-version-check --no-input overturemaps==1.0.1
+      - name: Download real public Overture places and match Rome attractions
+        run: |
+          python scripts/overture-discovery-pilot.py \
+            --sortie docs/overture-public-rome-fixture.csv \
+            --source-data "${RUNNER_TEMP}/overture-rome.geojsonseq" \
+            --outdir "${RUNNER_TEMP}/rome-report"
+      - name: Print complete results
+        if: success()
+        run: |
+          cat "${RUNNER_TEMP}/rome-report/summary.json"
+          cat "${RUNNER_TEMP}/rome-report/candidates.csv"
